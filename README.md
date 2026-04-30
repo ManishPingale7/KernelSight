@@ -1,4 +1,4 @@
-# KernelSight - DEVELOPING...
+# KernelSight 
 
 > PTX-level static analysis and ML-based performance prediction for CUDA kernels — before they ever run on hardware.
 
