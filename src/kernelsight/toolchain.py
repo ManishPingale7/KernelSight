@@ -99,9 +99,11 @@ def ptxas_status() -> ToolStatus:
         ).stdout
     except (OSError, subprocess.SubprocessError) as exc:
         return ToolStatus("ptxas", path, None, str(exc))
-    # The last line looks like: "Cuda compilation tools, release 12.9, V12.9.86"
-    lines = [ln for ln in out.splitlines() if ln.strip()]
-    return ToolStatus("ptxas", path, lines[-1].strip() if lines else None)
+    # Output ends with two lines like:
+    #   Cuda compilation tools, release 12.9, V12.9.86
+    #   Build cuda_12.9.r12.9/compiler.36037853_0
+    release = [ln.strip() for ln in out.splitlines() if "release" in ln]
+    return ToolStatus("ptxas", path, release[-1] if release else out.strip() or None)
 
 
 def nvrtc_status() -> ToolStatus:
