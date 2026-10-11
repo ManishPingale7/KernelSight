@@ -29,7 +29,9 @@ jobs:
             pip install -e ".[dev]"
           fi
       - name: Lint
-        run: ruff check .
+        run: |
+          ruff check .
+          ruff format --check src tests scripts
       - name: Toolchain report
         run: kernelsight doctor
       - name: Test
