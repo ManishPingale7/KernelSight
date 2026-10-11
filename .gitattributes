@@ -1,0 +1,6 @@
+# Normalize text files to LF in the repository so golden-file tests behave the
+# same on Windows and Linux.
+* text=auto eol=lf
+
+*.ico binary
+*.png binary

@@ -1,52 +1,58 @@
-# Byte-compiled / optimized / DLL files
+# --- Python ---
 __pycache__/
 *.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# Virtual environments
+# --- Virtual environments / local config ---
+.venv/
 venv/
 env/
-ENV/
-env.bak/
-venv.bak/
-
-# Environment variables
 .env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+.env.*
 
-# IDEs
+# --- IDEs / OS ---
 .vscode/
 .idea/
 *.swp
 *.swo
+.DS_Store
+Thumbs.db
 
-# Project specific
+# --- AI coding assistant / agent files ---
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+AGENTS.md
+AGENTS.override.md
+.codex/
+GEMINI.md
+.gemini/
+.cursor/
+.cursorrules
+.cursorignore
+.windsurf/
+.windsurfrules
+.aider*
+.continue/
+.github/copilot-instructions.md
+.github/instructions/
+.github/prompts/
+
+# --- Generated compiler output ---
+# PTX/cubin produced while experimenting stays local. Checked-in test
+# fixtures and examples are re-included explicitly below.
 *.ptx
 *.cubin
+*.fatbin
+!tests/fixtures/**/*.ptx
+!examples/**/*.ptx
+
+# --- KernelSight output ---
+/out/
+/reports/

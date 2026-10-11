@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kernelsight"
+version = "0.2.0.dev0"
+description = "PTX static analysis and compiler output comparison for CUDA kernels"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Manish Pingale" }]
+# The core library (parser, analyses, reports) deliberately has no runtime
+# dependencies. Everything below is optional.
+dependencies = []
+
+[project.optional-dependencies]
+# NVRTC (CUDA C++ -> PTX) and ptxas (PTX -> machine code + resource usage),
+# shipped by NVIDIA as pip wheels. Pinned to CUDA 12.9 so the generated PTX
+# can still be JIT-loaded by drivers that support CUDA >= 12.9.
+toolchain = [
+    "nvidia-cuda-nvrtc-cu12==12.9.86",
+    "nvidia-cuda-nvcc-cu12==12.9.86",
+]
+api = ["fastapi>=0.115", "uvicorn>=0.30"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+kernelsight = "kernelsight.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "toolchain: needs NVRTC/ptxas (skipped automatically when unavailable)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+# The legacy prototype in backend/ is replaced in later milestones (parser in
+# M1, API in M5); lint it once it has been rewritten on top of the library.
+extend-exclude = ["backend"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
