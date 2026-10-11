@@ -93,6 +93,23 @@ kernelsight serve                           # API + UI on http://127.0.0.1:8000
 
 For UI development, run `kernelsight serve --reload` and `npm run dev` (port 3000).
 
+### GPU measurements (optional)
+
+[`kernelsight.bench`](src/kernelsight/bench.py) checks whether the static
+findings match real behaviour. Each study runs two variants of a kernel
+(fast-math, shared-memory tiling, warp-shuffle reduction, forced spills, `-G`)
+on the local GPU through the CUDA driver API. It loads exactly the cubin
+whose resource usage the report shows, verifies the output against a Python
+reference, and times it (median and IQR of batched launches).
+
+```powershell
+python scripts/benchmark_study.py   # writes examples/benchmarks/results.{md,json}
+```
+
+The script refuses to run while other applications use the GPU, and records
+utilisation, clocks and throttling with the results. With a handful of
+kernels on one laptop GPU this is an evidence study, not a performance model.
+
 ## How it works
 
 ```
