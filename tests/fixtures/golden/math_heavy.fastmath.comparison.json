@@ -32,6 +32,7 @@
       "_Z6smoothf",
       "math_heavy"
     ],
+    "ptxas_only": [],
     "identical": [
       "polynomial"
     ],

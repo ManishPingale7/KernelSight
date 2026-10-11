@@ -146,7 +146,7 @@ def comparison_report(
         "header": {k: list(v) for k, v in diff.header.items()},
         "summary": {
             status: [f.name for f in diff.functions if f.status == status]
-            for status in ("changed", "identical", "only_in_a", "only_in_b")
+            for status in ("changed", "ptxas_only", "identical", "only_in_a", "only_in_b")
         },
         "functions": [_function_diff(fd) for fd in diff.functions],
     }

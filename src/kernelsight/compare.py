@@ -44,11 +44,19 @@ class FunctionDiff:
 
     @property
     def status(self) -> str:
+        """changed | ptxas_only | identical | only_in_a | only_in_b"""
         if self.a is None:
             return "only_in_b"
         if self.b is None:
             return "only_in_a"
-        return "changed" if self.diff else "identical"
+        if self.diff:
+            return "changed"
+        # Same PTX instructions, but ptxas produced different machine code
+        # (e.g. the same PTX assembled for two GPU architectures).
+        ptxas = [v for k, v in self.metrics.items() if k.startswith("ptxas_")]
+        if any(a != b for a, b in ptxas):
+            return "ptxas_only"
+        return "identical"
 
 
 @dataclass

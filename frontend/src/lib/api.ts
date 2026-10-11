@@ -96,7 +96,7 @@ type Pair = [number | null, number | null];
 
 export interface FunctionDiff {
   name: string;
-  status: "changed" | "identical" | "only_in_a" | "only_in_b";
+  status: "changed" | "ptxas_only" | "identical" | "only_in_a" | "only_in_b";
   metrics: Record<string, Pair>;
   by_category: Record<string, Pair>;
   memory: Record<string, Pair>;
@@ -111,7 +111,7 @@ export interface ComparisonReport {
   a: { label: string; provenance: Provenance };
   b: { label: string; provenance: Provenance };
   header: Record<string, [string, string]>;
-  summary: Record<"changed" | "identical" | "only_in_a" | "only_in_b", string[]>;
+  summary: Record<FunctionDiff["status"], string[]>;
   functions: FunctionDiff[];
 }
 

@@ -18,6 +18,15 @@ CATEGORY_LABELS = {
 }
 
 
+STATUS_TEXT = {
+    "changed": "changed",
+    "ptxas_only": "identical PTX, different ptxas results",
+    "identical": "identical",
+    "only_in_a": "only in A",
+    "only_in_b": "only in B",
+}
+
+
 def _table(headers: list[str], rows: list[list]) -> list[str]:
     out = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
     out += ["| " + " | ".join("" if c is None else str(c) for c in row) + " |" for row in rows]
@@ -120,7 +129,8 @@ def comparison_markdown(report: dict) -> str:
         out.append(f"- Module `{key}`: `{va}` → `{vb}`")
     s = report["summary"]
     out += [
-        f"- Functions: {len(s['changed'])} changed, {len(s['identical'])} identical, "
+        f"- Functions: {len(s['changed'])} changed, {len(s['ptxas_only'])} with identical PTX "
+        f"but different ptxas results, {len(s['identical'])} identical, "
         f"{len(s['only_in_a'])} only in {a}, {len(s['only_in_b'])} only in {b}",
         "",
     ]
@@ -130,7 +140,7 @@ def comparison_markdown(report: dict) -> str:
 
 
 def _function_diff_md(fd: dict, a: str, b: str) -> list[str]:
-    out = [f"## `{fd['name']}`: {fd['status'].replace('_', ' ')}", ""]
+    out = [f"## `{fd['name']}`: {STATUS_TEXT[fd['status']]}", ""]
     if fd["status"] in ("only_in_a", "only_in_b"):
         return out
     rows = [[k.replace("_", " "), va, vb, _delta(va, vb)] for k, (va, vb) in fd["metrics"].items()]

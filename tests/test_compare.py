@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from kernelsight.analysis import analyze
+from kernelsight.analysis.resources import parse_ptxas_output
 from kernelsight.compare import compare, normalized_listing
 from kernelsight.ptx import parse
 
@@ -42,6 +43,21 @@ def test_fast_math_changes():
     assert after < before / 2
     poly = next(f for f in d.functions if f.name == "polynomial")
     assert poly.status == "identical"  # f64 code is not affected by fast math
+
+
+def test_ptxas_only_status():
+    """Identical PTX assembled for two architectures gives different machine code."""
+    a, b = load("matmul.sm75"), load("matmul.sm89")
+    a.function("matmul_naive").resources = parse_ptxas_output(
+        "Compiling entry function 'matmul_naive' for 'sm_75'\nUsed 49 registers"
+    )["matmul_naive"]
+    b.function("matmul_naive").resources = parse_ptxas_output(
+        "Compiling entry function 'matmul_naive' for 'sm_89'\nUsed 40 registers"
+    )["matmul_naive"]
+    by_name = {f.name: f for f in compare(a, b).functions}
+    assert by_name["matmul_naive"].status == "ptxas_only"
+    assert by_name["matmul_naive"].metrics["ptxas_registers"] == (49, 40)
+    assert by_name["matmul_tiled"].status == "identical"  # no ptxas data on either side
 
 
 def test_target_change_with_identical_ptx():

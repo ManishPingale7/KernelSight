@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from html import escape
 
-from kernelsight.report.markdown import CATEGORY_LABELS
+from kernelsight.report.markdown import CATEGORY_LABELS, STATUS_TEXT
 
 _CSS = """
 :root { --bg:#fff; --fg:#1d1d1f; --muted:#6b6b70; --line:#e3e3e6; --card:#f7f7f8;
@@ -182,7 +182,7 @@ def comparison_html(report: dict) -> str:
 
 
 def _function_diff_html(fd: dict, a: str, b: str) -> str:
-    status = escape(fd["status"].replace("_", " "))
+    status = escape(STATUS_TEXT[fd["status"]])
     out = [f"<h2><code>{escape(fd['name'])}</code> <span class='muted'>{status}</span></h2>"]
     if fd["status"] in ("only_in_a", "only_in_b"):
         return "\n".join(out)

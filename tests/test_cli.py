@@ -50,7 +50,7 @@ def test_compare_two_ptx_files(capsys):
     a, b = PTX / "elementwise.sm89.ptx", PTX / "elementwise.sm89_debug.ptx"
     assert main(["compare", str(a), str(b), "--no-ptxas"]) == 0
     out = capsys.readouterr().out
-    assert "_Z11make_float4ffff`: only in b" in out
+    assert "_Z11make_float4ffff`: only in B" in out
 
 
 def test_cfg_dot(capsys):

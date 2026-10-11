@@ -7,6 +7,7 @@ import { ProvenanceList } from "@/components/common";
 
 const STATUS_LABEL: Record<FunctionDiff["status"], string> = {
   changed: "changed",
+  ptxas_only: "same PTX, ptxas differs",
   identical: "identical",
   only_in_a: "only in A",
   only_in_b: "only in B",
