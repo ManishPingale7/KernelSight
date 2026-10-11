@@ -5,6 +5,7 @@ Commands
 analyze FILE           analyse a .ptx file, or a .cu file compiled with NVRTC
 compare A B            compare two inputs (or one .cu file under two option sets)
 cfg FILE -f NAME       print one function's control-flow graph as Graphviz DOT
+serve                  run the web API and UI (needs the [api] extra)
 doctor                 check the optional NVIDIA toolchain
 
 Compiler options that start with '-' must be attached with '=':
@@ -111,6 +112,17 @@ def _cmd_cfg(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_serve(args: argparse.Namespace) -> int:
+    try:
+        import uvicorn
+    except ImportError:
+        print("error: the web API needs: pip install -e .[api]", file=sys.stderr)
+        return 1
+    print(f"KernelSight API on http://{args.host}:{args.port}  (UI at / if built)")
+    uvicorn.run("kernelsight.api:app", host=args.host, port=args.port, reload=args.reload)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="kernelsight",
@@ -155,6 +167,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--opt", action="append", default=[], help="NVRTC option (repeatable)")
     common(p, formats=False)
     p.set_defaults(func=_cmd_cfg)
+
+    p = sub.add_parser("serve", help="run the web API (and the built UI)")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("--port", type=int, default=8000)
+    p.add_argument("--reload", action="store_true", help="restart on code changes (development)")
+    p.set_defaults(func=_cmd_serve)
 
     p = sub.add_parser("doctor", help="check the optional NVIDIA toolchain")
     p.set_defaults(func=_cmd_doctor)
