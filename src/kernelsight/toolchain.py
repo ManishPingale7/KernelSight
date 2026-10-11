@@ -208,6 +208,18 @@ def run_ptxas(ptx: str, arch: str = "sm_89", extra_args: list[str] | tuple[str, 
     ``-v`` makes ptxas print per-function resource usage (registers, spills,
     shared memory). Raises ToolchainError if the PTX is rejected.
     """
+    return assemble(ptx, arch, extra_args)[0]
+
+
+def assemble(
+    ptx: str, arch: str = "sm_89", extra_args: list[str] | tuple[str, ...] = ()
+) -> tuple[str, bytes]:
+    """Run ``ptxas -v`` and return (resource report text, cubin bytes).
+
+    The cubin is the GPU machine code ptxas produced; loading exactly this
+    cubin for benchmarks ensures the code that is timed is the code whose
+    resource usage was reported.
+    """
     import tempfile
 
     path = find_ptxas()
@@ -215,18 +227,12 @@ def run_ptxas(ptx: str, arch: str = "sm_89", extra_args: list[str] | tuple[str, 
         raise ToolchainError("ptxas not found; install with: pip install -e .[toolchain]")
     with tempfile.TemporaryDirectory() as tmp:
         src = Path(tmp) / "input.ptx"
+        out = Path(tmp) / "out.cubin"
         src.write_text(ptx, encoding="utf-8", newline="\n")
-        cmd = [
-            str(path),
-            f"-arch={arch}",
-            "-v",
-            *extra_args,
-            str(src),
-            "-o",
-            str(Path(tmp) / "out.cubin"),
-        ]
+        cmd = [str(path), f"-arch={arch}", "-v", *extra_args, str(src), "-o", str(out)]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        cubin = out.read_bytes() if proc.returncode == 0 else b""
     output = (proc.stdout + proc.stderr).replace(str(src), "input.ptx")
     if proc.returncode != 0:
         raise ToolchainError(f"ptxas rejected the PTX:\n{output.strip()}")
-    return output
+    return output, cubin
