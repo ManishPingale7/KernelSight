@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>KernelSight: matmul.cu --arch=sm_75 vs matmul.cu --arch=sm_89</title>
+<style>
+:root { --bg:#fff; --fg:#1d1d1f; --muted:#6b6b70; --line:#e3e3e6; --card:#f7f7f8;
+        --accent:#2f6fde; --add:#e6f4ea; --del:#fdecea; --warn:#b15c00; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#151517; --fg:#ececef; --muted:#9a9aa2; --line:#2c2c31; --card:#1d1d21;
+          --accent:#6d9cf0; --add:#1c3324; --del:#3a1f1f; --warn:#f0a14a; } }
+* { box-sizing: border-box; }
+body { margin:0; padding:24px 16px 64px; background:var(--bg); color:var(--fg);
+       font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 24px; margin: 0 0 8px; } h2 { font-size: 19px; margin: 32px 0 8px; }
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px; }
+.muted { color: var(--muted); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px; margin: 12px 0; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.tile b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; background: var(--accent); border-radius: 4px; min-width: 2px; }
+.finding { border-left: 3px solid var(--accent); padding: 4px 12px; margin: 10px 0; }
+.finding.warning { border-color: var(--warn); }
+pre.diff { margin: 0; white-space: pre; }
+pre.diff span { display: block; }
+pre.diff .add { background: var(--add); } pre.diff .del { background: var(--del); }
+details > summary { cursor: pointer; margin: 8px 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>KernelSight comparison: matmul.cu --arch=sm_75 → matmul.cu --arch=sm_89</h1>
+<p><b>matmul.cu --arch=sm_75</b></p>
+<ul class='muted'><li>Input <code>matmul.cu</code> (cuda), sha256 <code>17b349ea04d1c15d…</code></li><li>NVRTC 12.9: <code>-arch=compute_75</code></li><li>ptxas Cuda compilation tools, release 12.9, V12.9.86, <code>-arch=sm_75</code></li></ul>
+<p><b>matmul.cu --arch=sm_89</b></p>
+<ul class='muted'><li>Input <code>matmul.cu</code> (cuda), sha256 <code>17b349ea04d1c15d…</code></li><li>NVRTC 12.9: <code>-arch=compute_89</code></li><li>ptxas Cuda compilation tools, release 12.9, V12.9.86, <code>-arch=sm_89</code></li></ul>
+<p>Module <code>target</code>: <code>sm_75</code> → <code>sm_89</code></p>
+<h2><code>matmul_naive</code> <span class='muted'>identical PTX, different ptxas results</span></h2>
+<div class='card'><table><thead><tr><th>Metric</th><th class='num'>matmul.cu --arch=sm_75</th><th class='num'>matmul.cu --arch=sm_89</th><th class='num'>Δ</th></tr></thead><tbody><tr><td>instructions</td><td class='num'>81</td><td class='num'>81</td><td class='num'>0</td></tr><tr><td>instructions in loops</td><td class='num'>30</td><td class='num'>30</td><td class='num'>0</td></tr><tr><td>basic blocks</td><td class='num'>10</td><td class='num'>10</td><td class='num'>0</td></tr><tr><td>loops</td><td class='num'>2</td><td class='num'>2</td><td class='num'>0</td></tr><tr><td>virtual registers</td><td class='num'>103</td><td class='num'>103</td><td class='num'>0</td></tr><tr><td>peak live slots</td><td class='num'>25</td><td class='num'>25</td><td class='num'>0</td></tr><tr><td>ptxas registers</td><td class='num'>49</td><td class='num'>40</td><td class='num'>-9</td></tr><tr><td>ptxas spill stores</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr><tr><td>ptxas spill loads</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr><tr><td>ptxas stack frame</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr><tr><td>ptxas shared mem</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr></tbody></table></div>
+<h2><code>matmul_tiled</code> <span class='muted'>identical PTX, different ptxas results</span></h2>
+<div class='card'><table><thead><tr><th>Metric</th><th class='num'>matmul.cu --arch=sm_75</th><th class='num'>matmul.cu --arch=sm_89</th><th class='num'>Δ</th></tr></thead><tbody><tr><td>instructions</td><td class='num'>123</td><td class='num'>123</td><td class='num'>0</td></tr><tr><td>instructions in loops</td><td class='num'>74</td><td class='num'>74</td><td class='num'>0</td></tr><tr><td>basic blocks</td><td class='num'>10</td><td class='num'>10</td><td class='num'>0</td></tr><tr><td>loops</td><td class='num'>1</td><td class='num'>1</td><td class='num'>0</td></tr><tr><td>virtual registers</td><td class='num'>133</td><td class='num'>133</td><td class='num'>0</td></tr><tr><td>peak live slots</td><td class='num'>26</td><td class='num'>26</td><td class='num'>0</td></tr><tr><td>ptxas registers</td><td class='num'>39</td><td class='num'>38</td><td class='num'>-1</td></tr><tr><td>ptxas spill stores</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr><tr><td>ptxas spill loads</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr><tr><td>ptxas stack frame</td><td class='num'>0</td><td class='num'>0</td><td class='num'>0</td></tr><tr><td>ptxas shared mem</td><td class='num'>2048</td><td class='num'>2048</td><td class='num'>0</td></tr></tbody></table></div>
+</main>
+</body>
+</html>
