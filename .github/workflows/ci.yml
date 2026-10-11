@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, ${{ matrix.toolchain && 'with' || 'no' }} toolchain)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        toolchain: [false, true]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [ "${{ matrix.toolchain }}" = "true" ]; then
+            pip install -e ".[dev,toolchain]"
+          else
+            pip install -e ".[dev]"
+          fi
+      - name: Lint
+        run: ruff check .
+      - name: Toolchain report
+        run: kernelsight doctor
+      - name: Test
+        run: pytest -q -rs
