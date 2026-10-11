@@ -34,6 +34,7 @@ where = ["src"]
 testpaths = ["tests"]
 markers = [
     "toolchain: needs NVRTC/ptxas (skipped automatically when unavailable)",
+    "gpu: needs a CUDA GPU and driver (skipped automatically when unavailable)",
 ]
 
 [tool.ruff]
