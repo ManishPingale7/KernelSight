@@ -1,0 +1,11 @@
+ptxas info    : 24 bytes gmem, 8 bytes cmem[4]
+ptxas info    : Compiling entry function 'many_live_values' for 'sm_89'
+ptxas info    : Function properties for many_live_values
+    352 bytes stack frame, 416 bytes spill stores, 576 bytes spill loads
+ptxas info    : Used 24 registers, used 0 barriers, 352 bytes cumulative stack size, 372 bytes cmem[0]
+ptxas info    : Compiling entry function 'matmul_tiled' for 'sm_89'
+ptxas info    : Function properties for matmul_tiled
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 38 registers, used 1 barriers, 2048 bytes smem, 380 bytes cmem[0], 8 bytes cmem[2]
+ptxas info    : Function properties for _Z6smoothf
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads

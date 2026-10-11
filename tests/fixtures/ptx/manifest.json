@@ -1,0 +1,116 @@
+{
+  "nvrtc_version": "12.9",
+  "files": {
+    "elementwise.sm89.ptx": {
+      "source": "examples/kernels/elementwise.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "elementwise.sm89_fastmath.ptx": {
+      "source": "examples/kernels/elementwise.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    },
+    "elementwise.sm89_lineinfo.ptx": {
+      "source": "examples/kernels/elementwise.cu",
+      "options": [
+        "-arch=compute_89",
+        "-lineinfo"
+      ]
+    },
+    "elementwise.sm89_debug.ptx": {
+      "source": "examples/kernels/elementwise.cu",
+      "options": [
+        "-arch=compute_89",
+        "-G"
+      ]
+    },
+    "histogram.sm89.ptx": {
+      "source": "examples/kernels/histogram.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "histogram.sm89_fastmath.ptx": {
+      "source": "examples/kernels/histogram.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    },
+    "math_heavy.sm89.ptx": {
+      "source": "examples/kernels/math_heavy.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "math_heavy.sm89_fastmath.ptx": {
+      "source": "examples/kernels/math_heavy.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    },
+    "matmul.sm89.ptx": {
+      "source": "examples/kernels/matmul.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "matmul.sm89_fastmath.ptx": {
+      "source": "examples/kernels/matmul.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    },
+    "matmul.sm75.ptx": {
+      "source": "examples/kernels/matmul.cu",
+      "options": [
+        "-arch=compute_75"
+      ]
+    },
+    "reduction.sm89.ptx": {
+      "source": "examples/kernels/reduction.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "reduction.sm89_fastmath.ptx": {
+      "source": "examples/kernels/reduction.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    },
+    "register_pressure.sm89.ptx": {
+      "source": "examples/kernels/register_pressure.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "register_pressure.sm89_fastmath.ptx": {
+      "source": "examples/kernels/register_pressure.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    },
+    "transpose.sm89.ptx": {
+      "source": "examples/kernels/transpose.cu",
+      "options": [
+        "-arch=compute_89"
+      ]
+    },
+    "transpose.sm89_fastmath.ptx": {
+      "source": "examples/kernels/transpose.cu",
+      "options": [
+        "-arch=compute_89",
+        "--use_fast_math"
+      ]
+    }
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "schema": "kernelsight.analysis/1",
+  "tool": {
+    "name": "kernelsight",
+    "version": "0.2.0.dev0"
+  },
+  "provenance": {
+    "input": {
+      "name": "elementwise.sm89.ptx",
+      "sha256": "6383f1d558f17de06dc04db4b9c50237ab366fd860a73990ebbe3dff3480f76a",
+      "kind": "ptx"
+    },
+    "ptx_sha256": "6383f1d558f17de06dc04db4b9c50237ab366fd860a73990ebbe3dff3480f76a"
+  },
+  "module": {
+    "version": "8.8",
+    "target": [
+      "sm_89"
+    ],
+    "address_size": 64
+  },
+  "functions": [
+    {
+      "name": "vector_add",
+      "kind": "entry",
+      "line": 15,
+      "params": [
+        "vector_add_param_0",
+        "vector_add_param_1",
+        "vector_add_param_2",
+        "vector_add_param_3"
+      ],
+      "instructions": {
+        "total": 22,
+        "predicated": 1,
+        "by_category": {
+          "memory": 7,
+          "move_convert": 6,
+          "int_arith": 5,
+          "control": 2,
+          "compare": 1,
+          "fp_arith": 1
+        },
+        "memory": {
+          "load.global": 2,
+          "load.param": 4,
+          "store.global": 1
+        },
+        "uncategorized": []
+      },
+      "loops": {
+        "count": 0,
+        "max_depth": 0,
+        "instructions_in_loops": 0,
+        "by_category_in_loops": {}
+      },
+      "cfg": {
+        "blocks": [
+          {
+            "id": 0,
+            "name": "B0",
+            "lines": [
+              28,
+              37
+            ],
+            "instructions": 10,
+            "loop_depth": 0,
+            "successors": [
+              "$L__BB0_2",
+              "B1"
+            ]
+          },
+          {
+            "id": 1,
+            "name": "B1",
+            "lines": [
+              39,
+              49
+            ],
+            "instructions": 11,
+            "loop_depth": 0,
+            "successors": [
+              "$L__BB0_2"
+            ]
+          },
+          {
+            "id": 2,
+            "name": "$L__BB0_2",
+            "lines": [
+              52,
+              52
+            ],
+            "instructions": 1,
+            "loop_depth": 0,
+            "successors": []
+          }
+        ],
+        "loops": [],
+        "unreachable": []
+      },
+      "registers": {
+        "declared": 23,
+        "declared_by_type": {
+          "b32": 6,
+          "b64": 11,
+          "f32": 4,
+          "pred": 2
+        },
+        "declared_slots": 32,
+        "peak_live_slots": 10,
+        "peak_live_line": 34,
+        "peak_live_predicates": 1
+      },
+      "ptxas": null,
+      "findings": []
+    },
+    {
+      "name": "saxpy",
+      "kind": "entry",
+      "line": 56,
+      "params": [
+        "saxpy_param_0",
+        "saxpy_param_1",
+        "saxpy_param_2",
+        "saxpy_param_3"
+      ],
+      "instructions": {
+        "total": 25,
+        "predicated": 2,
+        "by_category": {
+          "memory": 7,
+          "move_convert": 6,
+          "int_arith": 6,
+          "control": 3,
+          "compare": 2,
+          "fp_arith": 1
+        },
+        "memory": {
+          "load.global": 2,
+          "load.param": 4,
+          "store.global": 1
+        },
+        "uncategorized": []
+      },
+      "loops": {
+        "count": 1,
+        "max_depth": 1,
+        "instructions_in_loops": 10,
+        "by_category_in_loops": {
+          "int_arith": 4,
+          "memory": 3,
+          "fp_arith": 1,
+          "compare": 1,
+          "control": 1
+        }
+      },
+      "cfg": {
+        "blocks": [
+          {
+            "id": 0,
+            "name": "B0",
+            "lines": [
+              69,
+              78
+            ],
+            "instructions": 10,
+            "loop_depth": 0,
+            "successors": [
+              "$L__BB1_3",
+              "B1"
+            ]
+          },
+          {
+            "id": 1,
+            "name": "B1",
+            "lines": [
+              80,
+              83
+            ],
+            "instructions": 4,
+            "loop_depth": 0,
+            "successors": [
+              "$L__BB1_2"
+            ]
+          },
+          {
+            "id": 2,
+            "name": "$L__BB1_2",
+            "lines": [
+              86,
+              95
+            ],
+            "instructions": 10,
+            "loop_depth": 1,
+            "successors": [
+              "$L__BB1_2",
+              "$L__BB1_3"
+            ]
+          },
+          {
+            "id": 3,
+            "name": "$L__BB1_3",
+            "lines": [
+              98,
+              98
+            ],
+            "instructions": 1,
+            "loop_depth": 0,
+            "successors": []
+          }
+        ],
+        "loops": [
+          {
+            "header": "$L__BB1_2",
+            "depth": 1,
+            "blocks": [
+              "$L__BB1_2"
+            ]
+          }
+        ],
+        "unreachable": []
+      },
+      "registers": {
+        "declared": 27,
+        "declared_by_type": {
+          "b32": 11,
+          "b64": 8,
+          "f32": 5,
+          "pred": 3
+        },
+        "declared_slots": 32,
+        "peak_live_slots": 12,
+        "peak_live_line": 90,
+        "peak_live_predicates": 1
+      },
+      "ptxas": null,
+      "findings": []
+    },
+    {
+      "name": "scale_vec4",
+      "kind": "entry",
+      "line": 102,
+      "params": [
+        "scale_vec4_param_0",
+        "scale_vec4_param_1",
+        "scale_vec4_param_2",
+        "scale_vec4_param_3"
+      ],
+      "instructions": {
+        "total": 22,
+        "predicated": 1,
+        "by_category": {
+          "memory": 6,
+          "move_convert": 5,
+          "int_arith": 4,
+          "fp_arith": 4,
+          "control": 2,
+          "compare": 1
+        },
+        "memory": {
+          "load.global": 1,
+          "load.param": 4,
+          "store.global": 1
+        },
+        "uncategorized": []
+      },
+      "loops": {
+        "count": 0,
+        "max_depth": 0,
+        "instructions_in_loops": 0,
+        "by_category_in_loops": {}
+      },
+      "cfg": {
+        "blocks": [
+          {
+            "id": 0,
+            "name": "B0",
+            "lines": [
+              115,
+              124
+            ],
+            "instructions": 10,
+            "loop_depth": 0,
+            "successors": [
+              "$L__BB2_2",
+              "B1"
+            ]
+          },
+          {
+            "id": 1,
+            "name": "B1",
+            "lines": [
+              126,
+              136
+            ],
+            "instructions": 11,
+            "loop_depth": 0,
+            "successors": [
+              "$L__BB2_2"
+            ]
+          },
+          {
+            "id": 2,
+            "name": "$L__BB2_2",
+            "lines": [
+              139,
+              139
+            ],
+            "instructions": 1,
+            "loop_depth": 0,
+            "successors": []
+          }
+        ],
+        "loops": [],
+        "unreachable": []
+      },
+      "registers": {
+        "declared": 30,
+        "declared_by_type": {
+          "b32": 6,
+          "b64": 8,
+          "f32": 14,
+          "pred": 2
+        },
+        "declared_slots": 36,
+        "peak_live_slots": 9,
+        "peak_live_line": 121,
+        "peak_live_predicates": 1
+      },
+      "ptxas": null,
+      "findings": []
+    }
+  ]
+}

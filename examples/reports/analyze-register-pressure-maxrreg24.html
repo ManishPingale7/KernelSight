@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>KernelSight: register_pressure.cu</title>
+<style>
+:root { --bg:#fff; --fg:#1d1d1f; --muted:#6b6b70; --line:#e3e3e6; --card:#f7f7f8;
+        --accent:#2f6fde; --add:#e6f4ea; --del:#fdecea; --warn:#b15c00; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#151517; --fg:#ececef; --muted:#9a9aa2; --line:#2c2c31; --card:#1d1d21;
+          --accent:#6d9cf0; --add:#1c3324; --del:#3a1f1f; --warn:#f0a14a; } }
+* { box-sizing: border-box; }
+body { margin:0; padding:24px 16px 64px; background:var(--bg); color:var(--fg);
+       font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 24px; margin: 0 0 8px; } h2 { font-size: 19px; margin: 32px 0 8px; }
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px; }
+.muted { color: var(--muted); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px; margin: 12px 0; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.tile b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; background: var(--accent); border-radius: 4px; min-width: 2px; }
+.finding { border-left: 3px solid var(--accent); padding: 4px 12px; margin: 10px 0; }
+.finding.warning { border-color: var(--warn); }
+pre.diff { margin: 0; white-space: pre; }
+pre.diff span { display: block; }
+pre.diff .add { background: var(--add); } pre.diff .del { background: var(--del); }
+details > summary { cursor: pointer; margin: 8px 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>KernelSight analysis: register_pressure.cu</h1>
+<ul class='muted'><li>Input <code>register_pressure.cu</code> (cuda), sha256 <code>2d82bfb16ec4b683…</code></li><li>NVRTC 12.9: <code>-arch=compute_89</code></li><li>ptxas Cuda compilation tools, release 12.9, V12.9.86, <code>-arch=sm_89 -maxrregcount=24</code></li></ul>
+<p class='muted'>PTX ISA 8.8, target <code>sm_89</code>, 64-bit</p>
+<h2><code>many_live_values</code> <span class='muted'>kernel, line 15</span></h2>
+<div class='tiles'><div class='tile'><span class='muted'>Instructions</span><b>302</b></div><div class='tile'><span class='muted'>In loops</span><b>0</b></div><div class='tile'><span class='muted'>Blocks / loops</span><b>3 / 0</b></div><div class='tile'><span class='muted'>Virtual regs declared</span><b>303</b></div><div class='tile'><span class='muted'>Peak live (32-bit slots)</span><b>69</b></div><div class='tile'><span class='muted'>ptxas registers</span><b>24</b></div><div class='tile'><span class='muted'>Spills st / ld (B)</span><b>416 / 576</b></div><div class='tile'><span class='muted'>Shared mem (B)</span><b>0</b></div></div>
+<div class='card'><table><thead><tr><th>Category</th><th class='num'>Count</th><th class='num'>In loops</th><th></th></tr></thead><tbody><tr><td>integer arithmetic</td><td class='num'>130</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:43.0%'></div></td></tr><tr><td>float arithmetic</td><td class='num'>128</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:42.4%'></div></td></tr><tr><td>memory</td><td class='num'>36</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:11.9%'></div></td></tr><tr><td>move / convert</td><td class='num'>5</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:1.7%'></div></td></tr><tr><td>control flow</td><td class='num'>2</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:0.7%'></div></td></tr><tr><td>compare / select</td><td class='num'>1</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:0.3%'></div></td></tr></tbody></table></div>
+<div class='card'><table><thead><tr><th>Memory operation</th><th class='num'>Count</th></tr></thead><tbody><tr><td>load.global</td><td class='num'>32</td></tr><tr><td>load.param</td><td class='num'>3</td></tr><tr><td>store.global</td><td class='num'>1</td></tr></tbody></table></div>
+<div class='finding warning'><b>ptxas spilled registers (416 B stored, 576 B loaded per thread)</b> <span class='muted'>(register-spills)</span><br>With 24 registers per thread, ptxas could not keep all live values in registers and moved some to local memory. Reducing values live at the same time, or relaxing a register limit, removes spills.<br><i>Caveat:</i> Spills are decided after PTX, so they have no PTX line numbers.</div>
+<details><summary>Control-flow graph: basic blocks</summary><div class='card'><table><thead><tr><th>Block</th><th>Lines</th><th class='num'>Instructions</th><th class='num'>Loop depth</th><th class='num'>Successors</th></tr></thead><tbody><tr><td>B0</td><td>27–35</td><td class='num'>9</td><td class='num'>0</td><td class='num'>$L__BB0_2, B1</td></tr><tr><td>B1</td><td>37–328</td><td class='num'>292</td><td class='num'>0</td><td class='num'>$L__BB0_2</td></tr><tr><td>$L__BB0_2</td><td>331–331</td><td class='num'>1</td><td class='num'>0</td><td class='num'></td></tr></tbody></table></div></details>
+<h2><code>dynamic_local_index</code> <span class='muted'>kernel, line 335</span></h2>
+<div class='tiles'><div class='tile'><span class='muted'>Instructions</span><b>43</b></div><div class='tile'><span class='muted'>In loops</span><b>0</b></div><div class='tile'><span class='muted'>Blocks / loops</span><b>3 / 0</b></div><div class='tile'><span class='muted'>Virtual regs declared</span><b>42</b></div><div class='tile'><span class='muted'>Peak live (32-bit slots)</span><b>12</b></div><div class='tile'><span class='muted'>ptxas registers</span><b>12</b></div><div class='tile'><span class='muted'>Spills st / ld (B)</span><b>0 / 0</b></div><div class='tile'><span class='muted'>Shared mem (B)</span><b>0</b></div></div>
+<div class='card'><table><thead><tr><th>Category</th><th class='num'>Count</th><th class='num'>In loops</th><th></th></tr></thead><tbody><tr><td>float arithmetic</td><td class='num'>15</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:34.9%'></div></td></tr><tr><td>memory</td><td class='num'>10</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:23.3%'></div></td></tr><tr><td>move / convert</td><td class='num'>7</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:16.3%'></div></td></tr><tr><td>integer arithmetic</td><td class='num'>6</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:14.0%'></div></td></tr><tr><td>control flow</td><td class='num'>2</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:4.7%'></div></td></tr><tr><td>logic / shift</td><td class='num'>2</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:4.7%'></div></td></tr><tr><td>compare / select</td><td class='num'>1</td><td class='num'>0</td><td style='width:40%'><div class='bar' style='width:2.3%'></div></td></tr></tbody></table></div>
+<div class='card'><table><thead><tr><th>Memory operation</th><th class='num'>Count</th></tr></thead><tbody><tr><td>load.global</td><td class='num'>1</td></tr><tr><td>load.local</td><td class='num'>1</td></tr><tr><td>load.param</td><td class='num'>3</td></tr><tr><td>store.global</td><td class='num'>1</td></tr><tr><td>store.local</td><td class='num'>4</td></tr></tbody></table></div>
+<div class='finding info'><b>5 local-memory access(es) in PTX</b> <span class='muted'>(local-memory)</span><br>Per-thread arrays indexed with run-time values, or too large for registers, are placed in local memory. Despite the name it resides in device memory (cached in L1/L2), so it is much slower than registers.<br><span class='muted'>PTX lines: 367, 372, 377, 382, 389</span><br><i>Caveat:</i> ptxas reports a 0-byte stack frame for this function, so these accesses were optimised away.</div>
+<details><summary>Control-flow graph: basic blocks</summary><div class='card'><table><thead><tr><th>Block</th><th>Lines</th><th class='num'>Instructions</th><th class='num'>Loop depth</th><th class='num'>Successors</th></tr></thead><tbody><tr><td>B0</td><td>350–359</td><td class='num'>10</td><td class='num'>0</td><td class='num'>$L__BB1_2, B1</td></tr><tr><td>B1</td><td>361–392</td><td class='num'>32</td><td class='num'>0</td><td class='num'>$L__BB1_2</td></tr><tr><td>$L__BB1_2</td><td>395–395</td><td class='num'>1</td><td class='num'>0</td><td class='num'></td></tr></tbody></table></div></details>
+</main>
+</body>
+</html>

@@ -22,7 +22,7 @@ toolchain = [
     "nvidia-cuda-nvcc-cu12==12.9.86",
 ]
 api = ["fastapi>=0.115", "uvicorn>=0.30"]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["pytest>=8", "ruff>=0.6", "httpx>=0.27"]
 
 [project.scripts]
 kernelsight = "kernelsight.cli:main"
@@ -34,15 +34,13 @@ where = ["src"]
 testpaths = ["tests"]
 markers = [
     "toolchain: needs NVRTC/ptxas (skipped automatically when unavailable)",
+    "gpu: needs a CUDA GPU and driver (skipped automatically when unavailable)",
 ]
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
-# The legacy prototype in backend/ is replaced in later milestones (parser in
-# M1, API in M5); lint it once it has been rewritten on top of the library.
-extend-exclude = ["backend"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]

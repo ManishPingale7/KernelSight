@@ -122,3 +122,117 @@ def nvrtc_status() -> ToolStatus:
     except OSError as exc:
         return ToolStatus("nvrtc", path, None, str(exc))
     return ToolStatus("nvrtc", path, f"{major.value}.{minor.value}")
+
+
+# --------------------------------------------------------------------------
+# Running the tools
+# --------------------------------------------------------------------------
+
+
+class ToolchainError(RuntimeError):
+    """A tool is missing, or it rejected its input (the log is in the message)."""
+
+
+@dataclass(frozen=True)
+class CompileResult:
+    ptx: str
+    log: str  # compiler warnings (may be empty)
+    options: tuple[str, ...]
+    nvrtc_version: str
+
+
+_nvrtc_lib: ctypes.CDLL | None = None
+
+
+def _load_nvrtc() -> ctypes.CDLL:
+    global _nvrtc_lib
+    if _nvrtc_lib is None:
+        path = find_nvrtc()
+        if path is None:
+            raise ToolchainError("NVRTC not found; install with: pip install -e .[toolchain]")
+        if _IS_WINDOWS:
+            # NVRTC loads nvrtc-builtins64_*.dll at runtime with a plain
+            # LoadLibrary call, which searches PATH (not add_dll_directory).
+            os.environ["PATH"] = str(path.parent) + os.pathsep + os.environ.get("PATH", "")
+        lib = ctypes.CDLL(str(path))
+        lib.nvrtcGetErrorString.restype = ctypes.c_char_p
+        _nvrtc_lib = lib
+    return _nvrtc_lib
+
+
+def compile_cuda(source: str, options: list[str] | tuple[str, ...] = (), name: str = "kernel.cu"):
+    """Compile CUDA C++ source to PTX with NVRTC.
+
+    ``options`` are NVRTC flags, e.g. ``["-arch=compute_89", "--use_fast_math"]``.
+    NVRTC compiles device code only and needs no host compiler. Kernels that
+    should be easy to find in the PTX can be declared ``extern "C"`` to avoid
+    C++ name mangling.
+    """
+    lib = _load_nvrtc()
+
+    def check(result: int, what: str) -> None:
+        if result != 0:
+            raise ToolchainError(f"{what}: {lib.nvrtcGetErrorString(result).decode()}")
+
+    prog = ctypes.c_void_p()
+    check(
+        lib.nvrtcCreateProgram(ctypes.byref(prog), source.encode(), name.encode(), 0, None, None),
+        "nvrtcCreateProgram",
+    )
+    try:
+        opts = (ctypes.c_char_p * len(options))(*(o.encode() for o in options))
+        compile_result = lib.nvrtcCompileProgram(prog, len(options), opts)
+
+        log_size = ctypes.c_size_t()
+        check(lib.nvrtcGetProgramLogSize(prog, ctypes.byref(log_size)), "nvrtcGetProgramLogSize")
+        log_buf = ctypes.create_string_buffer(log_size.value)
+        check(lib.nvrtcGetProgramLog(prog, log_buf), "nvrtcGetProgramLog")
+        log = log_buf.value.decode(errors="replace").strip()
+        if compile_result != 0:
+            raise ToolchainError(f"NVRTC failed to compile {name}:\n{log}")
+
+        ptx_size = ctypes.c_size_t()
+        check(lib.nvrtcGetPTXSize(prog, ctypes.byref(ptx_size)), "nvrtcGetPTXSize")
+        ptx_buf = ctypes.create_string_buffer(ptx_size.value)
+        check(lib.nvrtcGetPTX(prog, ptx_buf), "nvrtcGetPTX")
+    finally:
+        lib.nvrtcDestroyProgram(ctypes.byref(prog))
+
+    status = nvrtc_status()
+    return CompileResult(ptx_buf.value.decode(), log, tuple(options), status.version or "?")
+
+
+def run_ptxas(ptx: str, arch: str = "sm_89", extra_args: list[str] | tuple[str, ...] = ()):
+    """Assemble PTX with ``ptxas -v`` and return its combined output.
+
+    ``-v`` makes ptxas print per-function resource usage (registers, spills,
+    shared memory). Raises ToolchainError if the PTX is rejected.
+    """
+    return assemble(ptx, arch, extra_args)[0]
+
+
+def assemble(
+    ptx: str, arch: str = "sm_89", extra_args: list[str] | tuple[str, ...] = ()
+) -> tuple[str, bytes]:
+    """Run ``ptxas -v`` and return (resource report text, cubin bytes).
+
+    The cubin is the GPU machine code ptxas produced; loading exactly this
+    cubin for benchmarks ensures the code that is timed is the code whose
+    resource usage was reported.
+    """
+    import tempfile
+
+    path = find_ptxas()
+    if path is None:
+        raise ToolchainError("ptxas not found; install with: pip install -e .[toolchain]")
+    with tempfile.TemporaryDirectory() as tmp:
+        src = Path(tmp) / "input.ptx"
+        out = Path(tmp) / "out.cubin"
+        src.write_text(ptx, encoding="utf-8", newline="\n")
+        cmd = [str(path), f"-arch={arch}", "-v", *extra_args, str(src), "-o", str(out)]
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        cubin = out.read_bytes() if proc.returncode == 0 else b""
+    output = (proc.stdout + proc.stderr).replace(str(src), "input.ptx")
+    if proc.returncode != 0:
+        raise ToolchainError(f"ptxas rejected the PTX:\n{output.strip()}")
+    return output, cubin
