@@ -82,8 +82,11 @@ def find_nvrtc() -> Path | None:
     for root in roots:
         folder = root / sub
         if folder.is_dir():
-            # Skip the "builtins" helper library; we want the compiler itself.
-            libs = sorted(p for p in folder.glob(pattern) if "builtins" not in p.name)
+            # Skip the "builtins" helper library and the ".alt" variant; we
+            # want the main compiler library (e.g. nvrtc64_120_0.dll).
+            libs = sorted(
+                p for p in folder.glob(pattern) if "builtins" not in p.name and ".alt" not in p.name
+            )
             if libs:
                 return libs[0]
     return None
