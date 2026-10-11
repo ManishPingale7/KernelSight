@@ -40,6 +40,9 @@ markers = [
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
+# The legacy prototype in backend/ is replaced in later milestones (parser in
+# M1, API in M5); lint it once it has been rewritten on top of the library.
+extend-exclude = ["backend"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
