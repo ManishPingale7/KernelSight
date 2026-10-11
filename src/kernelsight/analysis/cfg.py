@@ -203,3 +203,27 @@ def _loop_body(blocks: list[BasicBlock], header: int, tail: int) -> frozenset[in
                 body.add(p)
                 stack.append(p)
     return frozenset(body)
+
+
+def to_dot(cfg: CFG, title: str = "cfg") -> str:
+    """Graphviz DOT text for the CFG. Loop headers are drawn bold, unreachable
+    blocks dashed; each node shows its instruction count and loop depth.
+    Render with e.g. ``dot -Tsvg cfg.dot -o cfg.svg``."""
+    headers = {lp.header for lp in cfg.loops}
+    back = {edge for lp in cfg.loops for edge in lp.back_edges}
+    out = [f'digraph "{title}" {{', "  node [shape=box, fontname=monospace];"]
+    for b in cfg.blocks:
+        style = []
+        if b.id in headers:
+            style.append("bold")
+        if b.id in cfg.unreachable:
+            style.append("dashed")
+        attrs = f', style="{",".join(style)}"' if style else ""
+        # "\\n" is DOT's own line-break escape inside a label.
+        label = f"{b.name}\\n{len(b.instructions)} instr, depth {b.loop_depth}"
+        out.append(f'  b{b.id} [label="{label}"{attrs}];')
+    for src, dst in cfg.edges:
+        attrs = ' [label="back", color=blue]' if (src, dst) in back else ""
+        out.append(f"  b{src} -> b{dst}{attrs};")
+    out.append("}")
+    return "\n".join(out) + "\n"
